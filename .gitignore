@@ -32,3 +32,16 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# ignore dependency files
+**/node_modules/*
+lambda/**/*.zip
+**/.DS_Store
+
+**/archive/*
+
+**/local
+
+# lambda layer files
+backend/lambda/lambda_layer/packages/*
+backend/lambda/lambda_layer/python_dependencies.zip
