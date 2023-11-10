@@ -105,8 +105,8 @@ resource "aws_glue_catalog_database" "social_media_glue_catalog_database" {
   name = var.social_media_glue_catalog_database
 
 }
-resource "aws_glue_crawler" "reddit_crawler" {
-  name          = "reddit_crawler"
+resource "aws_glue_crawler" "reddit_posts_crawler" {
+  name          = "reddit_posts_crawler"
   role          = aws_iam_role.glue_role.arn
   database_name = aws_glue_catalog_database.social_media_glue_catalog_database.name
   schedule      = "cron(20 0 * * ? *)" // Daily at 12:20 AM UTC 
@@ -114,17 +114,26 @@ resource "aws_glue_crawler" "reddit_crawler" {
     recrawl_behavior = "CRAWL_NEW_FOLDERS_ONLY"
   }
   s3_target {
-    path = "s3://${var.social_media_data_bucket}/input/scrape_reddit"
+    path = "s3://${var.social_media_data_bucket}/input/scrape_reddit_posts"
   }
   schema_change_policy {
     delete_behavior = "LOG"
     update_behavior = "LOG"
   }
 }
-resource "aws_glue_trigger" "reddit_crawler_on_demand_trigger" {
-  name = "reddit_crawler_on_demand_trigger"
-  type = "ON_DEMAND"
-  actions {
-    crawler_name = aws_glue_crawler.reddit_crawler.name
+resource "aws_glue_crawler" "reddit_comments_crawler" {
+  name          = "reddit_comments_crawler"
+  role          = aws_iam_role.glue_role.arn
+  database_name = aws_glue_catalog_database.social_media_glue_catalog_database.name
+  schedule      = "cron(20 0 * * ? *)" // Daily at 12:20 AM UTC 
+  recrawl_policy {
+    recrawl_behavior = "CRAWL_NEW_FOLDERS_ONLY"
+  }
+  s3_target {
+    path = "s3://${var.social_media_data_bucket}/input/scrape_reddit_comments"
+  }
+  schema_change_policy {
+    delete_behavior = "LOG"
+    update_behavior = "LOG"
   }
 }

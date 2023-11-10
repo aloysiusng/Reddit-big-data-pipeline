@@ -26,7 +26,7 @@ def getPRAWClient():
 
 
 def parse_reddit_post(post):
-    return {
+    return json.dumps({
         "post_id": str(post.id),
         "post_date": str(datetime.fromtimestamp(post.created_utc)),
         "post_title": str(post.title),
@@ -35,11 +35,11 @@ def parse_reddit_post(post):
         "post_comment_count": int(post.num_comments),
         "post_score": int(post.score),
         "post_subreddit": str(post.subreddit),
-    }
+    })
 
 
 def parse_reddit_comment(post, comment):
-    return {
+    return json.dumps({
         "comment_id": str(comment.id),
         "comment_date": str(datetime.fromtimestamp(comment.created_utc)),
         "comment_content": str(comment.body),
@@ -47,7 +47,7 @@ def parse_reddit_comment(post, comment):
         "comment_score": int(comment.score),
         "post_id": str(post.id),
         "parent_id": str(comment.parent_id),
-    }
+    })
 
 
 def is_S3_empty():
@@ -101,14 +101,14 @@ def lambda_handler(event, context):
     try:
         s3.put_object(
             Bucket=bucket_name,
-            Key=f"input/scrape_reddit/{now_date_string}/posts.json",
-            Body=json.dumps(posts),
+            Key=f"input/scrape_reddit_posts/{now_date_string}/posts.json",
+            Body="\n".join(posts),
             ContentType="application/json",
         )
         s3.put_object(
             Bucket=bucket_name,
-            Key=f"input/scrape_reddit/{now_date_string}/comments.json",
-            Body=json.dumps(comments),
+            Key=f"input/scrape_reddit_comments/{now_date_string}/comments.json",
+            Body="\n".join(comments),
             ContentType="application/json",
         )
         s3.put_object(
