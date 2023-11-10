@@ -12,7 +12,7 @@ chmod +x build.sh
 ```
 - :memo: **Note:** This can be automated in a CI/CD pipeline, it will create a zip file containing the python dependencies needed for the lambda functions to run, to add more libraries, add them to the requirements.txt file and run the build.sh script again.
 
-3. Under the terraform directory, create a terraform.tfvars file with the following content:
+3. Under the terraform directory (change directory there!), create a terraform.tfvars file with the following content:
 
 ```
 AWS_ACCESS_KEY_ID     = "your_aws_access_key_id"
@@ -29,5 +29,15 @@ terraform init
 terraform apply
 ```
 
-5. After the terraform script is done, you will have to go to the AWS console and configure the Twitter credentials at Secrets Manager.
+5. After the terraform script is done, you will have to go to the AWS console and configure the Reddit credentials (client_id, client_secret, password, username, user_agent) at Secrets Manager.
 - :memo: **Note:** An alternative to secrets manager is to pass the secrets via the CI/CD pipeline directly into the environment variables of the lambda functions.
+
+
+### Credits
+Followed this guide to set up Reddit API:
+https://rymur.github.io/setup
+
+Used PRAW Python library to interact with Reddit API:
+PRAW documentation:
+https://praw.readthedocs.io/en/stable/index.html
+

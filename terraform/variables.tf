@@ -14,6 +14,14 @@ variable "AWS_REGION" {
 
 
 variable "social_media_data_bucket" {
-  type = string
-  default = "social-media-data-bucket"
+  type    = string
+  default = "aloy-social-media-data-bucket"
+}
+variable "glue_scripts_bucket" {
+  type    = string
+  default = "aloy-glue-scripts-bucket"
+}
+variable "social_media_glue_catalog_database" {
+  type    = string
+  default = "social_media_glue_catalog_database"
 }
