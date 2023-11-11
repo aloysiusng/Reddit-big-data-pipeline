@@ -9,6 +9,7 @@ import boto3
 s3 = boto3.client("s3")
 bucket_name = os.environ["S3_BUCKET_NAME"]
 
+
 def lambda_handler(event, context):
     now = datetime.now()
     year = now.year
@@ -17,11 +18,14 @@ def lambda_handler(event, context):
 
     # builder for manifest file
     manifest = defaultdict(list)
-    URIPrefixes = [
-        f"s3://{bucket_name}/output/reddit_overall_sentiments/{year}/{month}/{day}/",
-        f"s3://{bucket_name}/output/reddit_comprehended_posts/{year}/{month}/{day}/",
-        f"s3://{bucket_name}/output/reddit_comprehended_comments/{year}/{month}/{day}/",
-    ]
+    URIPrefixes = {
+        "URIPrefixes": [
+            f"s3://{bucket_name}/output/reddit_overall_sentiments/{year}/{month}/{day}/",
+            f"s3://{bucket_name}/output/reddit_comprehended_posts/{year}/{month}/{day}/",
+            f"s3://{bucket_name}/output/reddit_comprehended_comments/{year}/{month}/{day}/",
+        ]
+    }
+    
     manifest["fileLocations"] = [URIPrefixes]
     manifest["globalUploadSettings"] = {
         "format": "CSV",
