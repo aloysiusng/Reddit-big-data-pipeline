@@ -145,7 +145,7 @@ resource "aws_glue_crawler" "reddit_comments_crawler" {
 module "reddit_posts_job" {
   source                  = "./create_glue_jobs"
   job_name                = "reddit_posts_job"
-  s3_bucket_id            = aws_s3_bucket.social_media_data_bucket.id
+  s3_bucket_id            = aws_s3_bucket.glue_scripts_bucket.id
   iam_role_arn            = aws_iam_role.glue_role.arn
   path_to_glue_job_file   = "../backend/glue/reddit_posts_job.py"
   depends_on_crawler_name = aws_glue_crawler.reddit_posts_crawler.name
@@ -153,7 +153,7 @@ module "reddit_posts_job" {
 module "reddit_comments_job" {
   source                  = "./create_glue_jobs"
   job_name                = "reddit_comments_job"
-  s3_bucket_id            = aws_s3_bucket.social_media_data_bucket.id
+  s3_bucket_id            = aws_s3_bucket.glue_scripts_bucket.id
   iam_role_arn            = aws_iam_role.glue_role.arn
   path_to_glue_job_file   = "../backend/glue/reddit_comments_job.py"
   depends_on_crawler_name = aws_glue_crawler.reddit_comments_crawler.name
