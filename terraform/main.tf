@@ -51,17 +51,20 @@ module "attach_policies_for_glue" {
   policy_names = [
     "glue_access_policy",
     "glue_s3_access_policy",
-    "glue_cloudwatch_access_policy"
+    "glue_cloudwatch_access_policy",
+    "glue_comprehend_access_policy"
   ]
   policy_descriptions = [
     "Policy for lambda to access glue",
     "Policy for glue to access S3",
-    "Policy for glue to access cloudwatch"
+    "Policy for glue to access cloudwatch",
+    "Policy for glue to access comprehend"
   ]
   policy_documents = [
     data.aws_iam_policy_document.glue_policy.json,
     data.aws_iam_policy_document.glue_s3_policy.json,
     data.aws_iam_policy_document.cloudwatch_policy.json,
+    data.aws_iam_policy_document.glue_comprehend_policy.json
   ]
 }
 
@@ -136,4 +139,22 @@ resource "aws_glue_crawler" "reddit_comments_crawler" {
     delete_behavior = "LOG"
     update_behavior = "LOG"
   }
+}
+
+# glue jobs for etl 
+module "reddit_posts_job" {
+  source                  = "./create_glue_jobs"
+  job_name                = "reddit_posts_job"
+  s3_bucket_id            = aws_s3_bucket.social_media_data_bucket.id
+  iam_role_arn            = aws_iam_role.glue_role.arn
+  path_to_glue_job_file   = "../backend/glue/reddit_posts_job.py"
+  depends_on_crawler_name = aws_glue_crawler.reddit_posts_crawler.name
+}
+module "reddit_comments_job" {
+  source                  = "./create_glue_jobs"
+  job_name                = "reddit_comments_job"
+  s3_bucket_id            = aws_s3_bucket.social_media_data_bucket.id
+  iam_role_arn            = aws_iam_role.glue_role.arn
+  path_to_glue_job_file   = "../backend/glue/reddit_comments_job.py"
+  depends_on_crawler_name = aws_glue_crawler.reddit_comments_crawler.name
 }

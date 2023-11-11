@@ -74,3 +74,9 @@ data "aws_iam_policy_document" "glue_policy" {
     resources = ["*"]
   }
 }
+data "aws_iam_policy_document" "glue_comprehend_policy" {
+  statement {
+    actions   = ["glue:*", "athena:*", "comprehend:*"]
+    resources = ["*"]
+  }
+}
