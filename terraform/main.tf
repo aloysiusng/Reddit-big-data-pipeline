@@ -142,19 +142,11 @@ resource "aws_glue_crawler" "reddit_comments_crawler" {
 }
 
 # glue jobs for etl 
-module "reddit_posts_job" {
+module "comprehend_reddit_job" {
   source                  = "./create_glue_jobs"
-  job_name                = "reddit_posts_job"
+  job_name                = "comprehend_reddit_job"
   s3_bucket_id            = aws_s3_bucket.glue_scripts_bucket.id
   iam_role_arn            = aws_iam_role.glue_role.arn
-  path_to_glue_job_file   = "../backend/glue/reddit_posts_job.py"
+  path_to_glue_job_file   = "../backend/glue/comprehend_reddit_job.py"
   depends_on_crawler_name = aws_glue_crawler.reddit_posts_crawler.name
-}
-module "reddit_comments_job" {
-  source                  = "./create_glue_jobs"
-  job_name                = "reddit_comments_job"
-  s3_bucket_id            = aws_s3_bucket.glue_scripts_bucket.id
-  iam_role_arn            = aws_iam_role.glue_role.arn
-  path_to_glue_job_file   = "../backend/glue/reddit_comments_job.py"
-  depends_on_crawler_name = aws_glue_crawler.reddit_comments_crawler.name
 }
