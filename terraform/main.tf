@@ -84,12 +84,28 @@ resource "aws_lambda_layer_version" "python_dependencies_layer" {
 }
 
 #  Lambda ============================================================================================================
-module "demo_lambda" {
+module "scrape_reddit" {
   source               = "./create_lambda"
   lambda_function_name = "scrape_reddit"
   lambda_file_name     = "../backend/lambda/scrape_reddit.zip"
   lambda_role_arn      = aws_iam_role.lambda_role.arn
   lambda_handler       = "scrape_reddit.lambda_handler"
+  lambda_runtime       = "python3.9"
+  scheduler_role_arn   = aws_iam_role.eventbridge_role.arn
+  lambda_layers_arn    = [aws_lambda_layer_version.python_dependencies_layer.arn]
+  lambda_memory_size   = 3008           # default is 128, max is 10240
+  lambda_timeout       = 900            # max timeout at 900 seconds i.e. 15 minutes
+  lambda_schedule      = "rate(1 days)" # (default every 1 days)
+  environment_variables = {
+    S3_BUCKET_NAME = aws_s3_bucket.social_media_data_bucket.id
+  }
+}
+module "prepare_s3_manifest" {
+  source               = "./create_lambda"
+  lambda_function_name = "prepare_s3_manifest"
+  lambda_file_name     = "../backend/lambda/prepare_s3_manifest.zip"
+  lambda_role_arn      = aws_iam_role.lambda_role.arn
+  lambda_handler       = "prepare_s3_manifest.lambda_handler"
   lambda_runtime       = "python3.9"
   scheduler_role_arn   = aws_iam_role.eventbridge_role.arn
   lambda_layers_arn    = [aws_lambda_layer_version.python_dependencies_layer.arn]
