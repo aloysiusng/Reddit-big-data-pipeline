@@ -30,7 +30,9 @@ comments_df.dropDuplicates(
 #  sentiment analysis   =================================================================================================
 sentiments = []
 comprehend = boto3.client(service_name="comprehend", region_name="us-east-1")
-comment_content = comments_df.select("comment_content").to_list()
+comment_content = (
+    comments_df.select("comment_content").rdd.flatMap(lambda x: x).collect()
+)
 # batch process
 batches = [comment_content[i : i + 25] for i in range(0, len(comment_content), 25)]
 try:

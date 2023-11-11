@@ -38,7 +38,9 @@ posts_df = posts_df.withColumn(
 #  sentiment analysis   =================================================================================================
 sentiments = []
 comprehend = boto3.client(service_name="comprehend", region_name="us-east-1")
-post_title_and_content = posts_df.select("post_title_and_content").to_list()
+post_title_and_content = (
+    posts_df.select("post_title_and_content").rdd.flatMap(lambda x: x).collect()
+)
 # batch process
 batches = [
     post_title_and_content[i : i + 25]
